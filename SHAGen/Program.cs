@@ -16,7 +16,7 @@ namespace SHAGen
             var formattedOutput = new List<string>();
             foreach (var file in GetFiles(mainDir))
             {
-                formattedOutput.Add($"\"{GetRelativePath(file, mainDir)}\":\"{FileHash(file)}\"");
+                formattedOutput.Add($"\"{GetRelativePath(file, mainDir)}\":\"{FileHash(file)}\",");
             }
             File.WriteAllLines($"{mainDir}\\{output}",formattedOutput);
         }
@@ -48,7 +48,7 @@ namespace SHAGen
                 hashString = BitConverter.ToString(hash);
                 hashString = hashString.Replace("-", "");
             }
-            return hashString;
+            return hashString.ToLowerInvariant();
         }
     }
 }
