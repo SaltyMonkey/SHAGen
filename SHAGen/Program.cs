@@ -9,19 +9,33 @@ namespace SHAGen
     class Program
     {
         private static string output = "hashes.txt";
+        private static string mainDir = AppDomain.CurrentDomain.BaseDirectory;
+
         static void Main(string[] args)
         {
             var formattedOutput = new List<string>();
-            foreach (var file in GetFiles(AppDomain.CurrentDomain.BaseDirectory))
+            foreach (var file in GetFiles(mainDir))
             {
-                formattedOutput.Add($"\"{Path.GetFileName(file)}\":{FileHash(file)}");
+                formattedOutput.Add($"\"{GetRelativePath(file, mainDir)}\":\"{FileHash(file)}\"");
             }
-            File.WriteAllLines($"{AppDomain.CurrentDomain.BaseDirectory}\\{output}",formattedOutput);
+            File.WriteAllLines($"{mainDir}\\{output}",formattedOutput);
+        }
+
+        static string GetRelativePath(string filespec, string folder)
+        {
+            var pathUri = new Uri(filespec);
+            // Folders must end in a slash
+            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                folder += Path.DirectorySeparatorChar;
+            }
+            var folderUri = new Uri(folder);
+            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
         public static List<string> GetFiles(string path)
         {
-            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
+            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).Select(Path.GetFullPath).Where(p=> !p.Contains(".git") && !p.Contains("exe")).ToList();
         }
 
         public static string FileHash(string file)
