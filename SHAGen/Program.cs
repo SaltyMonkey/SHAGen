@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
+
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace SHAGen
 {
@@ -10,15 +15,20 @@ namespace SHAGen
     {
         private static string output = "hashes.txt";
         private static string mainDir = AppDomain.CurrentDomain.BaseDirectory;
-
-        static void Main(string[] args)
+      
+        static void Main()
         {
-            var formattedOutput = new List<string>();
+            Files fls = new Files();
+
             foreach (var file in GetFiles(mainDir))
             {
-                formattedOutput.Add($"\"{GetRelativePath(file, mainDir)}\":\"{FileHash(file)}\",");
+                fls.files.Add(GetRelativePath(file, mainDir), FileHash(file));
+                
             }
-            File.WriteAllLines($"{mainDir}\\{output}",formattedOutput);
+
+            var serialized = JsonConvert.SerializeObject(fls,Formatting.Indented);
+            File.WriteAllText(mainDir+output,serialized);
+
         }
 
         static string GetRelativePath(string filespec, string folder)
@@ -30,7 +40,7 @@ namespace SHAGen
                 folder += Path.DirectorySeparatorChar;
             }
             var folderUri = new Uri(folder);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString());
         }
 
         public static List<string> GetFiles(string path)
@@ -51,4 +61,11 @@ namespace SHAGen
             return hashString.ToLowerInvariant();
         }
     }
+
+    class Files
+    {
+        public Dictionary<string, string> files = new Dictionary<string, string>();
+    }
+
+
 }
