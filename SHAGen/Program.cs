@@ -13,7 +13,7 @@ namespace SHAGen
 {
     class Program
     {
-        private static string output = "hashes.txt";
+        private static string output = "manifest.json";
         private static string mainDir = AppDomain.CurrentDomain.BaseDirectory;
       
         static void Main()
