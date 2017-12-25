@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
-
 using System.Security.Cryptography;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 
 namespace SHAGen
@@ -53,7 +50,7 @@ namespace SHAGen
             string hashString;
             using (var stream = File.OpenRead(file))
             {
-                var sha = SHA1.Create();
+                var sha = SHA256.Create();
                 var hash = sha.ComputeHash(stream);
                 hashString = BitConverter.ToString(hash);
                 hashString = hashString.Replace("-", "");
