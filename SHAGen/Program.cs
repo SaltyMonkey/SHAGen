@@ -10,7 +10,7 @@ namespace SHAGen
 {
     class Program
     {
-        private static string output = "manifest.json";
+        private static string output = "generated-manifest.json";
         private static string mainDir = AppDomain.CurrentDomain.BaseDirectory;
       
         static void Main()
@@ -42,7 +42,7 @@ namespace SHAGen
 
         public static List<string> GetFiles(string path)
         {
-            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).Select(Path.GetFullPath).Where(p=> !p.Contains(".git") && !p.Contains("exe")).ToList();
+            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).Select(Path.GetFullPath).Where(p=> !p.Contains(".git") && !p.Contains(".exe") && !p.Contains(".bak") && !p.Contains(".txt")).ToList();
         }
 
         public static string FileHash(string file)
